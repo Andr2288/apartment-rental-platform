@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Privat24-inspired: темно-зелений + золотий акцент */
+@theme {
+    --color-p24-900: #023527;
+    --color-p24-800: #044d36;
+    --color-p24-700: #0a6b4a;
+    --color-p24-accent: #ffd600;
+    --color-p24-accent-hover: #e6c200;
+    --color-p24-surface: #eef2ef;
+}
