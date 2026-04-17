@@ -35,6 +35,8 @@ function buildQuery(filters) {
     return p.toString();
 }
 
+const PAGE_SIZE = 12;
+
 export default function ListingsPage() {
     const [filters, setFilters] = useState({
         search: "",
@@ -48,18 +50,27 @@ export default function ListingsPage() {
         has_appliances: "",
     });
     const [applied, setApplied] = useState(filters);
+    const [page, setPage] = useState(1);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const queryString = useMemo(() => buildQuery(applied), [applied]);
 
+    const results = data?.results ?? [];
+    const total = data?.count ?? 0;
+    const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+    const to = total === 0 ? 0 : (page - 1) * PAGE_SIZE + results.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
     const load = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const qs = queryString ? `?${queryString}` : "";
-            const r = await fetch(`/api/listings/${qs}`);
+            const p = new URLSearchParams(queryString);
+            p.set("page", String(page));
+            const qs = p.toString();
+            const r = await fetch(`/api/listings/?${qs}`);
             if (!r.ok) throw new Error(String(r.status));
             const json = await r.json();
             setData(json);
@@ -69,11 +80,20 @@ export default function ListingsPage() {
         } finally {
             setLoading(false);
         }
-    }, [queryString]);
+    }, [queryString, page]);
 
     useEffect(() => {
         load();
     }, [load]);
+
+    useEffect(() => {
+        if (!loading && data && total > 0) {
+            const maxP = Math.ceil(total / PAGE_SIZE);
+            if (page > maxP) {
+                setPage(maxP);
+            }
+        }
+    }, [loading, data, total, page]);
 
     function updateFilter(key, value) {
         setFilters((f) => ({ ...f, [key]: value }));
@@ -81,6 +101,7 @@ export default function ListingsPage() {
 
     function applyFilters(e) {
         e.preventDefault();
+        setPage(1);
         setApplied(filters);
     }
 
@@ -97,10 +118,9 @@ export default function ListingsPage() {
             has_appliances: "",
         };
         setFilters(empty);
+        setPage(1);
         setApplied(empty);
     }
-
-    const results = data?.results ?? [];
 
     return (
         <div className="space-y-6">
@@ -238,10 +258,41 @@ export default function ListingsPage() {
                 </p>
             )}
 
-            {!loading && !error && data && (
-                <p className="text-sm text-neutral-600">
-                    Знайдено: <span className="font-semibold text-p24-900">{data.count}</span>
-                </p>
+            {!loading && !error && data && total > 0 && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-p24-900/10 bg-white px-4 py-3 text-sm text-neutral-600 shadow-sm">
+                    <p>
+                        Знайдено: <span className="font-semibold text-p24-900">{total}</span>
+                        {total > 0 && (
+                            <span className="text-neutral-500">
+                                {" "}
+                                · показано {from}–{to}
+                            </span>
+                        )}
+                    </p>
+                    {totalPages > 1 && (
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                disabled={page <= 1}
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                className="rounded-lg border border-p24-900/15 bg-white px-3 py-1.5 text-sm font-medium text-p24-900 hover:bg-p24-surface disabled:pointer-events-none disabled:opacity-40"
+                            >
+                                Назад
+                            </button>
+                            <span className="tabular-nums text-neutral-500">
+                                {page} / {totalPages}
+                            </span>
+                            <button
+                                type="button"
+                                disabled={!data.next}
+                                onClick={() => setPage((p) => p + 1)}
+                                className="rounded-lg border border-p24-900/15 bg-white px-3 py-1.5 text-sm font-medium text-p24-900 hover:bg-p24-surface disabled:pointer-events-none disabled:opacity-40"
+                            >
+                                Далі
+                            </button>
+                        </div>
+                    )}
+                </div>
             )}
 
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
