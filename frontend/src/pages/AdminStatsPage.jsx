@@ -54,7 +54,7 @@ export default function AdminStatsPage() {
     if (!user.is_staff) {
         return (
             <div className="rounded-2xl border border-p24-900/10 bg-white p-8 text-center shadow-sm">
-                <p className="text-neutral-700">Ця сторінка доступна лише адміністраторам (staff).</p>
+                <p className="text-neutral-700">Недостатньо прав для перегляду.</p>
                 <Link to="/" className="mt-4 inline-block text-sm font-semibold text-p24-800 underline">
                     На головну
                 </Link>
@@ -65,19 +65,8 @@ export default function AdminStatsPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-2xl font-bold text-p24-900">Статистика платформи</h1>
-                <p className="mt-1 text-sm text-neutral-600">
-                    Зведені дані з бази. Модерація оголошень — у{" "}
-                    <a
-                        href="http://127.0.0.1:8000/admin/listings/listing/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-semibold text-p24-800 underline"
-                    >
-                        Django Admin
-                    </a>
-                    : виберіть рядки → дія «Опублікувати вибрані».
-                </p>
+                <h1 className="text-2xl font-bold text-p24-900">Статистика</h1>
+                <p className="mt-1 text-sm text-neutral-600">Показники на момент завантаження.</p>
             </div>
 
             {loading && <p className="text-sm text-neutral-600">Завантаження…</p>}

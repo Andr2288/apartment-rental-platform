@@ -32,7 +32,7 @@ export default function MainLayout() {
                             Оголошення
                         </NavLink>
                         <NavLink to="/ai-assistant" className={navClass}>
-                            AI-помічник
+                            Помічник
                         </NavLink>
                         {isLandlord && (
                             <NavLink to="/my-listings" className={navClass}>
@@ -76,8 +76,8 @@ export default function MainLayout() {
             <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
                 <Outlet />
             </main>
-            <footer className="border-t border-p24-900/10 bg-white py-4 text-center text-sm text-neutral-600">
-                Платформа оренди квартир · українською
+            <footer className="border-t border-p24-900/10 bg-white py-4 text-center text-sm text-neutral-500">
+                Оренда квартир
             </footer>
         </div>
     );

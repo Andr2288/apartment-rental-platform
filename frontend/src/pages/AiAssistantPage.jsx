@@ -34,7 +34,7 @@ export default function AiAssistantPage() {
             id: "welcome",
             role: "assistant",
             content:
-                "Привіт! Опишіть, що шукаєте (місто, бюджет, кімнати, район). Я підберу варіанти лише з опублікованих оголошень на цій платформі.",
+                "Привіт! Опишіть, що шукаєте: місто, бюджет, кімнати, район. Підберу відповідні оголошення з каталогу.",
             listings: [],
         },
     ]);
@@ -113,13 +113,9 @@ export default function AiAssistantPage() {
 
     return (
         <div className="flex min-h-[min(70vh,calc(100dvh-10.5rem))] flex-col gap-3">
-            <div className="shrink-0 rounded-2xl border border-p24-900/10 bg-white p-4 shadow-sm sm:p-6">
-                <h1 className="text-xl font-bold text-p24-900 sm:text-2xl">AI-помічник</h1>
-                <p className="mt-2 text-xs text-neutral-600 sm:text-sm">
-                    Лише каталог цього сайту. За наявності{" "}
-                    <code className="rounded bg-neutral-100 px-1">OPENAI_API_KEY</code> — розумніше
-                    ранжування; без ключа — підбір за словами з вашого запиту.
-                </p>
+            <div className="shrink-0 rounded-2xl border border-p24-900/10 bg-white px-4 py-3 shadow-sm sm:px-6 sm:py-4">
+                <h1 className="text-xl font-bold text-p24-900 sm:text-2xl">Помічник</h1>
+                <p className="mt-1 text-sm text-neutral-600">Підбір оголошень з каталогу сайту.</p>
             </div>
 
             <div
@@ -185,9 +181,7 @@ export default function AiAssistantPage() {
                     </div>
                 ))}
                 {loading && (
-                    <p className="text-center text-xs text-neutral-500 sm:text-sm">
-                        Думаю над відповіддю…
-                    </p>
+                    <p className="text-center text-xs text-neutral-500 sm:text-sm">Зачекайте…</p>
                 )}
             </div>
 
@@ -213,7 +207,7 @@ export default function AiAssistantPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={onKeyDown}
-                            placeholder="Повідомлення… (Enter — надіслати, Shift+Enter — новий рядок)"
+                            placeholder="Напишіть запит…"
                             className="max-h-[10.5rem] min-h-[2.75rem] w-full resize-none rounded-[1.15rem] bg-transparent px-3 py-2.5 text-sm leading-snug text-neutral-900 outline-none placeholder:text-neutral-400"
                         />
                     </div>
@@ -222,7 +216,7 @@ export default function AiAssistantPage() {
                         disabled={loading || !input.trim()}
                         className="mb-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-p24-accent text-p24-900 shadow-md transition hover:bg-p24-accent-hover hover:shadow-lg active:scale-95 disabled:pointer-events-none disabled:opacity-40 sm:h-12 sm:w-12"
                         aria-label={loading ? "Надсилання" : "Надіслати"}
-                        title="Надіслати (Enter)"
+                        title="Надіслати"
                     >
                         {loading ? (
                             <span className="h-2 w-2 animate-pulse rounded-full bg-p24-900/40" />
@@ -231,9 +225,6 @@ export default function AiAssistantPage() {
                         )}
                     </button>
                 </form>
-                <p className="mx-auto mt-2 max-w-4xl px-1 text-center text-[11px] text-neutral-500 sm:text-xs">
-                    Enter — надіслати · Shift+Enter — перенесення рядка
-                </p>
             </div>
         </div>
     );

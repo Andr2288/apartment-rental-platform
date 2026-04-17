@@ -228,9 +228,6 @@ export default function MyListingEditorPage({ create = false }) {
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <h1 className="text-2xl font-bold text-p24-900">{title}</h1>
-                    <p className="mt-1 text-sm text-neutral-600">
-                        Після збереження нове оголошення отримає статус «На модерації».
-                    </p>
                 </div>
                 <Link
                     to="/my-listings"
@@ -400,9 +397,6 @@ export default function MyListingEditorPage({ create = false }) {
             {!create && !loading && id && (
                 <section className="rounded-2xl border border-p24-900/10 bg-white p-6 shadow-sm sm:p-8">
                     <h2 className="text-lg font-semibold text-p24-900">Фото</h2>
-                    <p className="mt-1 text-sm text-neutral-600">
-                        Завантажуйте по одному або кілька файлів підряд (JPEG, PNG…).
-                    </p>
                     <input
                         type="file"
                         accept="image/*"

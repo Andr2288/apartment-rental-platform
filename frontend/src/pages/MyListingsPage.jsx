@@ -56,9 +56,7 @@ export default function MyListingsPage() {
     if (!isLandlord) {
         return (
             <div className="rounded-2xl border border-p24-900/10 bg-white p-8 text-center shadow-sm">
-                <p className="text-neutral-700">
-                    Розділ доступний лише для акаунта з роллю <strong>орендодавець</strong>.
-                </p>
+                <p className="text-neutral-700">Доступно лише для орендодавців.</p>
                 <Link to="/" className="mt-4 inline-block text-sm font-semibold text-p24-800 underline">
                     На головну
                 </Link>
@@ -73,9 +71,6 @@ export default function MyListingsPage() {
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-p24-900">Мої оголошення</h1>
-                    <p className="mt-1 text-sm text-neutral-600">
-                        Нові оголошення відправляються на модерацію (статус «На модерації»).
-                    </p>
                 </div>
                 <Link
                     to="/my-listings/new"
@@ -94,7 +89,7 @@ export default function MyListingsPage() {
 
             {!loading && !error && list.length === 0 && (
                 <p className="rounded-xl border border-p24-900/10 bg-white p-6 text-neutral-600">
-                    У вас ще немає оголошень. Натисніть «Додати оголошення».
+                    Поки що немає оголошень.
                 </p>
             )}
 
