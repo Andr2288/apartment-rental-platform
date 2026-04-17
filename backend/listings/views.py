@@ -6,12 +6,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from accounts.permissions import IsLandlord
 
 from .models import Listing, ListingImage
+from . import chat_service
 from .serializers import (
+    ListingBriefSerializer,
     ListingImageSerializer,
     ListingImageUploadSerializer,
     ListingSerializer,
@@ -169,3 +172,39 @@ class LandlordListingViewSet(ModelViewSet):
         img = get_object_or_404(ListingImage, pk=image_id, listing=listing)
         img.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AiChatView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        message = (request.data.get("message") or "").strip()
+        if not message:
+            return Response(
+                {"detail": "Введіть повідомлення."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(message) > 4000:
+            return Response(
+                {"detail": "Повідомлення занадто довге."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        published = (
+            Listing.objects.filter(status=Listing.Status.PUBLISHED)
+            .select_related("owner")
+            .prefetch_related("images")
+        )
+        result = chat_service.recommend(message, published)
+        ids = result.get("listing_ids") or []
+        id_order = {pk: i for i, pk in enumerate(ids)}
+        listings = list(
+            published.filter(id__in=ids).order_by(),
+        )
+        listings.sort(key=lambda x: id_order.get(x.id, 999))
+        serializer = ListingBriefSerializer(
+            listings,
+            many=True,
+            context={"request": request},
+        )
+        return Response({"reply": result.get("reply", ""), "listings": serializer.data})
