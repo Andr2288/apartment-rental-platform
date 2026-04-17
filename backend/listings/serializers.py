@@ -20,6 +20,35 @@ class ListingImageSerializer(serializers.ModelSerializer):
         return url
 
 
+class LandlordListingWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Listing
+        fields = (
+            "id",
+            "title",
+            "description",
+            "address_or_district",
+            "city",
+            "price",
+            "rooms",
+            "area_sqm",
+            "floor",
+            "housing_type",
+            "has_furniture",
+            "has_appliances",
+            "contact_info",
+        )
+
+
+class ListingImageUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ListingImage
+        fields = ("image", "sort_order")
+        extra_kwargs = {"sort_order": {"required": False, "default": 0}}
+
+
 class ListingSerializer(serializers.ModelSerializer):
     images = ListingImageSerializer(many=True, read_only=True)
     housing_type_display = serializers.CharField(source="get_housing_type_display", read_only=True)

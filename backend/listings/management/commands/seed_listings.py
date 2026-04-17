@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
+from accounts.models import Profile
 from listings.models import Listing
 
 
@@ -19,6 +20,13 @@ class Command(BaseCommand):
             user.set_password("demo12345")
             user.save()
             self.stdout.write(self.style.WARNING('Створено demo_landlord / demo12345 — змініть пароль у продакшені.'))
+
+        profile = getattr(user, "profile", None)
+        if profile and profile.role != Profile.Role.LANDLORD:
+            profile.role = Profile.Role.LANDLORD
+            profile.save(update_fields=["role"])
+        elif profile is None:
+            Profile.objects.create(user=user, role=Profile.Role.LANDLORD)
 
         samples = [
             {

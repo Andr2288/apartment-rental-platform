@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext.jsx";
 
 function navClass({ isActive }) {
     return [
@@ -10,6 +11,9 @@ function navClass({ isActive }) {
 }
 
 export default function MainLayout() {
+    const { user, isLandlord, logout } = useAuth();
+    const navigate = useNavigate();
+
     return (
         <div className="flex min-h-screen flex-col bg-p24-surface text-neutral-900">
             <header className="bg-p24-900 text-white shadow-md">
@@ -30,12 +34,37 @@ export default function MainLayout() {
                         <NavLink to="/ai-assistant" className={navClass}>
                             AI-помічник
                         </NavLink>
-                        <NavLink to="/login" className={navClass}>
-                            Вхід
-                        </NavLink>
-                        <NavLink to="/register" className={navClass}>
-                            Реєстрація
-                        </NavLink>
+                        {isLandlord && (
+                            <NavLink to="/my-listings" className={navClass}>
+                                Мої оголошення
+                            </NavLink>
+                        )}
+                        {user ? (
+                            <>
+                                <span className="hidden px-2 text-xs text-white/70 sm:inline">
+                                    {user.username}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        logout();
+                                        navigate("/", { replace: true });
+                                    }}
+                                    className="rounded-md px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10"
+                                >
+                                    Вийти
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <NavLink to="/login" className={navClass}>
+                                    Вхід
+                                </NavLink>
+                                <NavLink to="/register" className={navClass}>
+                                    Реєстрація
+                                </NavLink>
+                            </>
+                        )}
                     </nav>
                 </div>
             </header>
