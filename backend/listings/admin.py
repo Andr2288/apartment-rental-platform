@@ -40,4 +40,4 @@ class ListingAdmin(admin.ModelAdmin):
 
 @admin.register(ListingImage)
 class ListingImageAdmin(admin.ModelAdmin):
-    list_display = ("id", "listing", "sort_order")
+    list_display = ("id", "listing", "sort_order", "external_url")

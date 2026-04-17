@@ -63,11 +63,18 @@ class ListingImage(models.Model):
         on_delete=models.CASCADE,
         related_name="images",
     )
-    image = models.ImageField("фото", upload_to="listings/%Y/%m/")
+    image = models.ImageField("фото", upload_to="listings/%Y/%m/", blank=True, null=True)
+    external_url = models.URLField(
+        "посилання на фото",
+        max_length=2048,
+        blank=True,
+    )
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         ordering = ["sort_order", "id"]
 
     def __str__(self):
-        return f"{self.listing_id}: {self.image.name}"
+        if self.external_url:
+            return f"{self.listing_id}: {self.external_url[:80]}"
+        return f"{self.listing_id}: {self.image.name if self.image else ''}"

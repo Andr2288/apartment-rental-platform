@@ -38,6 +38,7 @@ export default function MyListingEditorPage({ create = false }) {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [uploading, setUploading] = useState(false);
+    const [imageLink, setImageLink] = useState("");
 
     const title = useMemo(() => (create ? "Нове оголошення" : "Редагування оголошення"), [create]);
 
@@ -178,10 +179,12 @@ export default function MyListingEditorPage({ create = false }) {
         setUploading(true);
         setError("");
         try {
+            let sortBase = images.length;
             for (const file of files) {
                 const fd = new FormData();
                 fd.append("image", file);
-                fd.append("sort_order", String(images.length));
+                fd.append("sort_order", String(sortBase));
+                sortBase += 1;
                 const r = await authFetch(`/api/my-listings/${id}/images/`, {
                     method: "POST",
                     body: fd,
@@ -194,6 +197,40 @@ export default function MyListingEditorPage({ create = false }) {
         } finally {
             setUploading(false);
             e.target.value = "";
+        }
+    }
+
+    async function onAddImageByUrl(e) {
+        e?.preventDefault?.();
+        const trimmed = imageLink.trim();
+        if (!trimmed || !id || create) return;
+        setUploading(true);
+        setError("");
+        try {
+            const r = await authFetch(`/api/my-listings/${id}/images/`, {
+                method: "POST",
+                body: JSON.stringify({
+                    image_url: trimmed,
+                    sort_order: images.length,
+                }),
+            });
+            const data = await r.json().catch(() => ({}));
+            if (!r.ok) {
+                let msg = "Не вдалося додати фото за посиланням.";
+                if (typeof data.detail === "string") msg = data.detail;
+                else if (Array.isArray(data.non_field_errors) && data.non_field_errors[0]) {
+                    msg = String(data.non_field_errors[0]);
+                } else if (Array.isArray(data.image_url) && data.image_url[0]) {
+                    msg = String(data.image_url[0]);
+                }
+                throw new Error(msg);
+            }
+            setImageLink("");
+            await reloadImages();
+        } catch (err) {
+            setError(err.message || "Помилка додавання фото.");
+        } finally {
+            setUploading(false);
         }
     }
 
@@ -397,6 +434,9 @@ export default function MyListingEditorPage({ create = false }) {
             {!create && !loading && id && (
                 <section className="rounded-2xl border border-p24-900/10 bg-white p-6 shadow-sm sm:p-8">
                     <h2 className="text-lg font-semibold text-p24-900">Фото</h2>
+                    <p className="mt-2 text-sm text-neutral-600">
+                        Завантажте файли з пристрою або вставте пряме посилання на зображення (https://…).
+                    </p>
                     <input
                         type="file"
                         accept="image/*"
@@ -405,6 +445,27 @@ export default function MyListingEditorPage({ create = false }) {
                         onChange={onPickFiles}
                         className="mt-4 block w-full text-sm text-neutral-700"
                     />
+                    <form onSubmit={onAddImageByUrl} className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+                        <label className="block min-w-0 flex-1 text-sm font-medium text-p24-900">
+                            Посилання на фото
+                            <input
+                                type="url"
+                                inputMode="url"
+                                placeholder="https://example.com/photo.jpg"
+                                value={imageLink}
+                                disabled={uploading}
+                                onChange={(e) => setImageLink(e.target.value)}
+                                className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none ring-p24-700 focus:ring-2"
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            disabled={uploading || !imageLink.trim()}
+                            className="shrink-0 rounded-lg border border-p24-900/20 bg-p24-50 px-4 py-2 text-sm font-semibold text-p24-900 hover:bg-p24-100 disabled:opacity-50"
+                        >
+                            Додати за посиланням
+                        </button>
+                    </form>
                     {uploading && <p className="mt-2 text-sm text-neutral-600">Завантаження…</p>}
                     <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {images.map((img) => (

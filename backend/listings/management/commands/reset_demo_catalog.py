@@ -6,9 +6,30 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from accounts.models import Profile
-from listings.models import Listing
+from listings.models import Listing, ListingImage
 
 User = get_user_model()
+
+# Стабільні посилання Unsplash (інтер’єри / житло) для демо-каталогу
+DEMO_LISTING_IMAGE_URLS = (
+    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4b750?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+)
+
+
+def _attach_demo_listing_images(listing: Listing, rng: random.Random) -> None:
+    k = rng.randint(2, 3)
+    picks = rng.sample(DEMO_LISTING_IMAGE_URLS, k=min(k, len(DEMO_LISTING_IMAGE_URLS)))
+    ListingImage.objects.bulk_create(
+        [
+            ListingImage(listing=listing, external_url=url, sort_order=i)
+            for i, url in enumerate(picks)
+        ],
+    )
 
 DEMO_PASSWORD = "demo12345"
 
@@ -147,7 +168,7 @@ class Command(BaseCommand):
                     price = Decimal(rng.randint(85, 320) * 100)
                     area = Decimal(rng.randint(22, 140))
 
-                    Listing.objects.create(
+                    listing = Listing.objects.create(
                         owner=landlord,
                         title=full_title[:200],
                         description=desc,
@@ -163,6 +184,7 @@ class Command(BaseCommand):
                         contact_info=f"+38050{rng.randint(1000000, 9999999)} · {landlord.email}",
                         status=Listing.Status.PUBLISHED,
                     )
+                    _attach_demo_listing_images(listing, rng)
                     listing_count += 1
 
         self.stdout.write(self.style.SUCCESS("Готово."))
