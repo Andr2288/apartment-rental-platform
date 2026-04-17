@@ -11,7 +11,7 @@ function navClass({ isActive }) {
 }
 
 export default function MainLayout() {
-    const { user, isLandlord, logout } = useAuth();
+    const { user, isLandlord, isStaff, logout } = useAuth();
     const navigate = useNavigate();
 
     return (
@@ -37,6 +37,11 @@ export default function MainLayout() {
                         {isLandlord && (
                             <NavLink to="/my-listings" className={navClass}>
                                 Мої оголошення
+                            </NavLink>
+                        )}
+                        {isStaff && (
+                            <NavLink to="/admin-stats" className={navClass}>
+                                Статистика
                             </NavLink>
                         )}
                         {user ? (

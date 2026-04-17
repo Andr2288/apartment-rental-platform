@@ -89,6 +89,7 @@ export function AuthProvider({ children }) {
             user,
             ready,
             isLandlord: user?.role === "landlord",
+            isStaff: Boolean(user?.is_staff),
             login,
             register,
             logout,

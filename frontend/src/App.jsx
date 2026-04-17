@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import MyListingEditorPage from "./pages/MyListingEditorPage.jsx";
 import MyListingsPage from "./pages/MyListingsPage.jsx";
+import AdminStatsPage from "./pages/AdminStatsPage.jsx";
 
 export default function App() {
     return (
@@ -22,6 +23,7 @@ export default function App() {
                         <Route path="my-listings/new" element={<MyListingEditorPage create />} />
                         <Route path="my-listings/:listingId/edit" element={<MyListingEditorPage />} />
                         <Route path="my-listings" element={<MyListingsPage />} />
+                        <Route path="admin-stats" element={<AdminStatsPage />} />
                         <Route path="ai-assistant" element={<AiAssistantPage />} />
                         <Route path="login" element={<LoginPage />} />
                         <Route path="register" element={<RegisterPage />} />
