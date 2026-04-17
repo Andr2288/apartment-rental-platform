@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
     const [apiStatus, setApiStatus] = useState("перевірка…");
@@ -30,9 +31,15 @@ export default function HomePage() {
             <section className="rounded-2xl border border-p24-900/10 bg-white p-8 shadow-sm">
                 <h1 className="text-2xl font-bold text-p24-900">Ласкаво просимо</h1>
                 <p className="mt-2 max-w-2xl text-neutral-600">
-                    Вебплатформа для пошуку квартир у оренду з AI-помічником. Далі крок за кроком
-                    з’являться оголошення, фільтри, облікові записи та чат.
+                    Вебплатформа для пошуку квартир у оренду з AI-помічником. Каталог оголошень і фільтри вже
+                    доступні; далі — облікові записи, кабінет орендодавця та чат.
                 </p>
+                <Link
+                    to="/listings"
+                    className="mt-6 inline-flex rounded-lg bg-p24-accent px-5 py-2.5 text-sm font-semibold text-p24-900 shadow-sm hover:bg-p24-accent-hover"
+                >
+                    Переглянути оголошення
+                </Link>
             </section>
             <section
                 className={`rounded-xl border px-5 py-4 text-sm ${

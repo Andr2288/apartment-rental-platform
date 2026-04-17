@@ -1,0 +1,50 @@
+from rest_framework import serializers
+
+from .models import Listing, ListingImage
+
+
+class ListingImageSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ListingImage
+        fields = ("id", "url", "sort_order")
+
+    def get_url(self, obj):
+        if not obj.image:
+            return None
+        request = self.context.get("request")
+        url = obj.image.url
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+
+class ListingSerializer(serializers.ModelSerializer):
+    images = ListingImageSerializer(many=True, read_only=True)
+    housing_type_display = serializers.CharField(source="get_housing_type_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+
+    class Meta:
+        model = Listing
+        fields = (
+            "id",
+            "title",
+            "description",
+            "address_or_district",
+            "city",
+            "price",
+            "rooms",
+            "area_sqm",
+            "floor",
+            "housing_type",
+            "housing_type_display",
+            "has_furniture",
+            "has_appliances",
+            "contact_info",
+            "status",
+            "status_display",
+            "created_at",
+            "updated_at",
+            "images",
+        )
