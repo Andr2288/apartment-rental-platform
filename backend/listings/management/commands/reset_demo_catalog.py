@@ -86,22 +86,7 @@ class Command(BaseCommand):
         "створює 5 орендарів, 5 орендодавців і по 3–5 опублікованих оголошень на кожного орендодавця."
     )
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--noinput",
-            action="store_true",
-            help="Не запитувати підтвердження (для скриптів).",
-        )
-
     def handle(self, *args, **options):
-        if not options["noinput"]:
-            ans = input(
-                "Буде видалено всіх користувачів, окрім superuser, і всі оголошення. Продовжити? [yes/N]: "
-            )
-            if ans.strip().lower() not in ("yes", "y", "так"):
-                self.stdout.write(self.style.WARNING("Скасовано."))
-                return
-
         with transaction.atomic():
             Listing.objects.all().delete()
             deleted_summary = User.objects.filter(is_superuser=False).delete()
