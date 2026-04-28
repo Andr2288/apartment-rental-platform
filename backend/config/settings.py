@@ -162,6 +162,18 @@ CORS_ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 
+DEFAULT_CSRF_TRUSTED_ORIGINS = [
+    "https://apartment-rental-platform-hma6.onrender.com",
+]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "DJANGO_CSRF_TRUSTED_ORIGINS",
+        ",".join(DEFAULT_CSRF_TRUSTED_ORIGINS),
+    ).split(",")
+    if origin.strip()
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
