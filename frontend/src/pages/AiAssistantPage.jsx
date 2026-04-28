@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { apiUrl } from "../api/baseUrl.js";
 
 function formatMoney(value) {
     const n = Number(value);
@@ -75,7 +76,7 @@ export default function AiAssistantPage() {
         scrollToEnd();
         setLoading(true);
         try {
-            const r = await fetch("/api/ai/chat/", {
+            const r = await fetch(apiUrl("/api/ai/chat/"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: text }),

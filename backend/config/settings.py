@@ -148,9 +148,18 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # CORS (Vite dev server)
+DEFAULT_CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://apartment-rental-platform-1.onrender.com",
+]
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
+    origin.strip()
+    for origin in os.getenv(
+        "DJANGO_CORS_ALLOWED_ORIGINS",
+        ",".join(DEFAULT_CORS_ALLOWED_ORIGINS),
+    ).split(",")
+    if origin.strip()
 ]
 
 REST_FRAMEWORK = {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { apiUrl } from "../api/baseUrl.js";
 
 function formatMoney(value) {
     const n = Number(value);
@@ -21,7 +22,7 @@ export default function ListingDetailPage() {
         let cancelled = false;
         setLoading(true);
         setError(null);
-        fetch(`/api/listings/${listingId}/`)
+        fetch(apiUrl(`/api/listings/${listingId}/`))
             .then((r) => {
                 if (r.status === 404) throw new Error("404");
                 if (!r.ok) throw new Error(String(r.status));

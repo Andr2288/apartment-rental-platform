@@ -1,4 +1,5 @@
 import { getStoredToken } from "../auth/AuthContext.jsx";
+import { apiUrl } from "./baseUrl.js";
 
 /**
  * @param {string} url
@@ -14,5 +15,5 @@ export async function authFetch(url, options = {}) {
     if (body && !(body instanceof FormData) && !headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
     }
-    return fetch(url, { ...options, headers });
+    return fetch(apiUrl(url), { ...options, headers });
 }

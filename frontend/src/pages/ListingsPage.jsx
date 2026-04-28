@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { apiUrl } from "../api/baseUrl.js";
 
 const housingOptions = [
     { value: "", label: "Усі типи" },
@@ -70,7 +71,7 @@ export default function ListingsPage() {
             const p = new URLSearchParams(queryString);
             p.set("page", String(page));
             const qs = p.toString();
-            const r = await fetch(`/api/listings/?${qs}`);
+            const r = await fetch(apiUrl(`/api/listings/?${qs}`));
             if (!r.ok) throw new Error(String(r.status));
             const json = await r.json();
             setData(json);

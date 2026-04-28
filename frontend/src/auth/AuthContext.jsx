@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { apiUrl } from "../api/baseUrl.js";
 
 const TOKEN_KEY = "apartment_rent_token";
 
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
             return;
         }
         try {
-            const r = await fetch("/api/auth/me/", {
+            const r = await fetch(apiUrl("/api/auth/me/"), {
                 headers: { Authorization: `Token ${token}` },
             });
             if (!r.ok) throw new Error("me");
@@ -44,7 +45,7 @@ export function AuthProvider({ children }) {
     }, [loadMe]);
 
     const login = useCallback(async (username, password) => {
-        const r = await fetch("/api/auth/login/", {
+        const r = await fetch(apiUrl("/api/auth/login/"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
@@ -60,7 +61,7 @@ export function AuthProvider({ children }) {
     }, []);
 
     const register = useCallback(async (payload) => {
-        const r = await fetch("/api/auth/register/", {
+        const r = await fetch(apiUrl("/api/auth/register/"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
